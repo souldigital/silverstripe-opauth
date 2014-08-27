@@ -117,10 +117,12 @@ class OpauthController extends ContentController {
 			return $this->handleOpauthException($e);
 		}
 
-		$identity = OpauthIdentity::factory($response);
-
-		$member = $identity->findOrCreateMember();
-
+		$identity = OpauthIdentity::factory($response);		
+		
+		$settings = Config::inst()->get('OpauthIdentity', 'user_settings');
+		
+		$member = $identity->findOrCreateMember($settings);
+		
 		// If the member exists, associate it with the identity and log in
 		if($member->isInDB() && $member->validate()->valid()) {
 			if(!$identity->exists()) {
@@ -153,6 +155,7 @@ class OpauthController extends ContentController {
 			else {
 				$member->extend('onBeforeOpauthRegister');
 				$member->write();
+				$member->extend('onAfterOpauthRegister');
 				$identity->MemberID = $member->ID;
 				$identity->write();
 			}
