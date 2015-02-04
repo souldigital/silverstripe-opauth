@@ -90,7 +90,7 @@ class OpauthRegisterForm extends Form {
 	 */
 	public function getActions() {
 		$actions = new FieldList(array(
-			new FormAction('doCompleteRegister', 'Complete'),
+			new FormAction('doCompleteRegister',  _t('OpauthRegisterForm.COMPLETE', 'Complete')),
 		));
 		$this->extend('updateActions', $actions);
 		return $actions;
@@ -100,7 +100,7 @@ class OpauthRegisterForm extends Form {
 	 * @return RequiredFields
 	 */
 	public function getValidator() {
-		return new OpauthValidator($this->requiredFields);
+		return Injector::inst()->create('OpauthValidator', $this->requiredFields);
 	}
 
 	/**
