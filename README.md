@@ -1,8 +1,6 @@
 # SilverStripe Opauth Module
 
-[![Build Status](https://secure.travis-ci.org/BetterBrief/silverstripe-opauth.png?branch=1.1)](http://travis-ci.org/BetterBrief/silverstripe-opauth)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/BetterBrief/silverstripe-opauth/badges/quality-score.png?s=257116d0420a86115addee48affc91a8abb41939)](https://scrutinizer-ci.com/g/BetterBrief/silverstripe-opauth/)
-[![Code Coverage](https://scrutinizer-ci.com/g/BetterBrief/silverstripe-opauth/badges/coverage.png?s=3ca06d73fa9aeb2dc7513c4ca6f6cf703a684911)](https://scrutinizer-ci.com/g/BetterBrief/silverstripe-opauth/)
+[![Build Status](https://secure.travis-ci.org/BetterBrief/silverstripe-opauth.png?branch=master)](http://travis-ci.org/BetterBrief/silverstripe-opauth)
 
 ## Introduction
 Uses the [Opauth library](http://opauth.org) for easy drop-in strategies for social login. See their [documentation](https://github.com/opauth/opauth/wiki/)
@@ -40,15 +38,14 @@ It includes:
 *NB: Opauth's maintainers recommend you include strategies as required, rather than bundling them together.*
 
 ### Where can I get strategies?
-You can find them under the "Available Strategies" heading on the [Opauth homepage](http://opauth.org)
 
-Alternatively, you can find them in the [bundle package](http://opauth.org/download.php).
+You can find a list under the "Available Strategies" heading on the [Opauth homepage](http://opauth.org)
 
-### Where should I put strategies?
-We recommend putting them under `mysite/code/thirdparty`, but it's up to you. Any root level directory that contains a `_config.php` (empty or otherwise) is scanned by the manifest builder.
+Packagist provides a [list of strategies](https://packagist.org/search/?q=opauth/) you can use to install via Composer.
 
-### Why isn't SilverStripe finding my stratagies in `mysite/code/thirdparty`?
-It could be you're super clever and have a `_manifest_exclude` file in your `thirdparty` folder, preventing it being spidered by SilverStripe's manifest builder. Try moving the stratagies folder to mysite/code/opauth/
+Use composer to install them. For example, to install the Facebook strategy:
+
+	composer require "opauth/facebook:*"
 
 ### How do I map the API responses to a `Member`?
 You define the `OpauthIdentity` `member_mapper` block in your `_config.yml`. Simply provide a hash map of member fields to dot notated paths of the Opauth response array for simple fields, or if you need to perform some parsing to retrieve the value you want, an array of class name and function, like `['OpauthResponseHelper', 'get_first_name']`. It takes the auth response array as an argument. See the example config YAML below for more details.
@@ -73,6 +70,7 @@ OpauthAuthenticator:
       Facebook:
         app_id: ''
         app_secret: ''
+        scope: email
       Google:
         client_id: ''
         client_secret: ''
@@ -90,6 +88,7 @@ OpauthIdentity:
       FirstName: 'info.first_name'
       Surname: 'info.last_name'
       Locale: 'raw.locale'
+      Email: 'info.email'
     Twitter:
       FirstName: ['OpauthResponseHelper', 'get_first_name']
       Surname: ['OpauthResponseHelper', 'get_last_name']
@@ -108,7 +107,8 @@ Config::inst()->update('OpauthAuthenticator', 'opauth_settings', array(
   'Strategy' => array(
     'Facebook' => array(
       'app_id' => '',
-      'app_secret' => ''
+      'app_secret' => '',
+      'scope' => 'email',
     ),
     'Google' => array(
       'client_id' => '',
@@ -123,22 +123,23 @@ Config::inst()->update('OpauthAuthenticator', 'opauth_settings', array(
 
 //Identity to member mapping settings per strategy
 Config::inst()->update('OpauthIdentity', 'member_mapper', array(
-	'Facebook' => array(
-		'FirstName' => 'info.first_name',
-		'Surname' => 'info.last_name',
-		'Locale' => 'raw.locale',
-	),
-	'Twitter' => array(
-		'FirstName' => array('OpauthResponseHelper', 'get_first_name'),
-		'Surname' => array('OpauthResponseHelper', 'get_last_name'),
-		'Locale' => array('OpauthResponseHelper', 'get_twitter_locale'),
-	),
-	'Google' => array(
-		'FirstName' => 'info.first_name',
-		'Surname' => 'info.last_name',
-		'Email' => 'info.email',
-		'Locale' => array('OpauthResponseHelper', 'get_google_locale'),
-	),
+  'Facebook' => array(
+    'FirstName' => 'info.first_name',
+    'Surname' => 'info.last_name',
+    'Locale' => 'raw.locale',
+    'Email' => 'info.email',
+  ),
+  'Twitter' => array(
+    'FirstName' => array('OpauthResponseHelper', 'get_first_name'),
+    'Surname' => array('OpauthResponseHelper', 'get_last_name'),
+    'Locale' => array('OpauthResponseHelper', 'get_twitter_locale'),
+  ),
+  'Google' => array(
+    'FirstName' => 'info.first_name',
+    'Surname' => 'info.last_name',
+    'Email' => 'info.email',
+    'Locale' => array('OpauthResponseHelper', 'get_google_locale'),
+  ),
 ));
 ```
 

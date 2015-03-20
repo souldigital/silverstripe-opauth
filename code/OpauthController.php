@@ -8,7 +8,7 @@
  * @author Dan Hensby <@dhensby>
  * @copyright Copyright (c) 2013, Better Brief LLP
  */
-class OpauthController extends ContentController {
+class OpauthController extends Controller {
 
 	private static
 		$allowed_actions = array(
@@ -117,10 +117,12 @@ class OpauthController extends ContentController {
 			return $this->handleOpauthException($e);
 		}
 
-		$identity = OpauthIdentity::factory($response);
-
-		$member = $identity->findOrCreateMember();
-
+		$identity = OpauthIdentity::factory($response);		
+		
+		$settings = Config::inst()->get('OpauthIdentity', 'user_settings');
+		
+		$member = $identity->findOrCreateMember($settings);
+		
 		// If the member exists, associate it with the identity and log in
 		if($member->isInDB() && $member->validate()->valid()) {
 			if(!$identity->exists()) {
@@ -130,6 +132,8 @@ class OpauthController extends ContentController {
 			else {
 				$flag = self::AUTH_FLAG_LOGIN;
 			}
+
+			Session::set('OpauthIdentityID', $identity->ID);
 		}
 		else {
 
@@ -138,11 +142,12 @@ class OpauthController extends ContentController {
 			// Write the identity
 			$identity->write();
 
+			// Keep a note of the identity ID
+			Session::set('OpauthIdentityID', $identity->ID);
+
 			// Even if written, check validation - we might not have full fields
 			$validationResult = $member->validate();
 			if(!$validationResult->valid()) {
-				// Keep a note of the identity ID
-				Session::set('OpauthIdentityID', $identity->ID);
 				// Set up the register form before it's output
 				$regForm = $this->RegisterForm();
 				$regForm->loadDataFrom($member);
@@ -153,6 +158,7 @@ class OpauthController extends ContentController {
 			else {
 				$member->extend('onBeforeOpauthRegister');
 				$member->write();
+				$member->extend('onAfterOpauthRegister');
 				$identity->MemberID = $member->ID;
 				$identity->write();
 			}
@@ -223,7 +229,7 @@ class OpauthController extends ContentController {
 
 	public function RegisterForm(SS_HTTPRequest $request = null, Member $member = null, $result = null) {
 		if(!isset($this->registerForm)) {
-			$form = new OpauthRegisterForm($this, 'RegisterForm', $result);
+			$form = Injector::inst()->create('OpauthRegisterForm', $this, 'RegisterForm', $result);
 			$form->populateFromSources($request, $member, $result);
 			// Set manually the form action due to how routing works
 			$form->setFormAction(Controller::join_links(

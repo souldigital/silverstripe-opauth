@@ -126,7 +126,7 @@ class OpauthIdentity extends DataObject {
 
 		$settings = array_merge($defaults, $usrSettings);
 
-		if($this->isInDB()) {
+		if($this->isInDB() && !$settings['overwriteExistingFields']) {
 			$member = $this->Member();
 			if($member->exists()) {
 				return $member;

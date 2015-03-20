@@ -7,7 +7,9 @@ The Opauth configuration system has been adapted to fit into the SilverStripe Co
 ## Registering a strategy
 All strategies you want to use will need to be registered with the module. No strategies are included by default and it's completely up to you which you'd like to use. You can even [write your own](https://github.com/opauth/opauth/wiki/Strategy-Contribution-Guide).
 
-To add the FacebookStrategy, first [download it](https://github.com/opauth/facebook#getting-started) from git hub and place it into your opauth strategies folder. We recommentd mysite/code/thirdparty as a good location for them.
+To add the Facebook Strategy, install it via composer:
+
+	composer require "opauth/facebook:*"
 
 Once you've downloaded the stratagies you want, you'll need to register them. This is how you'd do it if you were registering the Facebook Strategy:
 
@@ -65,3 +67,6 @@ If you wish to run some special logic at certain points of the authentication pr
 
 The extension points can be accessed using the standard SilverStripe DataExtension system, and should cover a lot of use cases where special business logic must happen.
 Since you can access the full object on the extended event, you can even customise your logic based on the identity provider for this request.
+
+#### OpauthMemberLoginFormExtension
+* `allow_password_reset`: Config setting to disable password resets for `Member` records which are linked with an identity provider (requires SilverStripe 3.1.4 or newer)
