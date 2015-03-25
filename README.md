@@ -7,7 +7,7 @@ Uses the [Opauth library](http://opauth.org) for easy drop-in strategies for soc
 
 ## Current Status
 
-1.1 - stable. No known major issues. Report issues using the [bug tracker](https://github.com/BetterBrief/silverstripe-opauth/issues).
+opauth_actions - Under heavy development - lots of bugs. Report issues using the [bug tracker](https://github.com/souldigital/silverstripe-opauth/issues).
 
 ## How does it work?
 The module provides an additional login form which the developer has control over, that allows users to instantly sign in to your website with an identity provided by any Oauth provider. The providers are each handled by using an `OpauthStrategy`, many of which are freely available. There are strategies for Facebook, Twitter, Google, and many more.
@@ -89,6 +89,7 @@ OpauthIdentity:
       Surname: 'info.last_name'
       Locale: 'raw.locale'
       Email: 'info.email'
+      CurrentMemberID: ['Member', 'currentUserID']
     Twitter:
       FirstName: ['OpauthResponseHelper', 'get_first_name']
       Surname: ['OpauthResponseHelper', 'get_last_name']
@@ -98,6 +99,10 @@ OpauthIdentity:
       Surname: 'info.last_name'
       Email: 'info.email'
       Locale: ['OpauthResponseHelper', 'get_google_locale']
+  member_lookup_var:
+    Facebook:
+      CurrentMemberID: 'ID'
+      Email: 'Email'
 ```
 
 ##### `_config.php` example:

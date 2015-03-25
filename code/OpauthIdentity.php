@@ -134,15 +134,15 @@ class OpauthIdentity extends DataObject {
 		}
 
 		$record = $this->getMemberRecordFromAuth();
+		$lookup_vars = $this->getMemberLookupVars();
+		$member = new Member();
 
-		if(empty($record['Email'])) {
-			$member = new Member();
-		}
-		else {
-			$member = Member::get()->filter('Email', $record['Email'])->first();
-
-			if(!$member) {
-				$member = new Member();
+		foreach($lookup_vars as $record_lookup => $member_lookup){
+			if(!empty($record[$record_lookup])) {
+				$member = Member::get()->filter($member_lookup, $record[$record_lookup])->first();
+			}
+			if($member->exists()){
+				break;
 			}
 		}
 
@@ -204,6 +204,17 @@ class OpauthIdentity extends DataObject {
 		$mapper = Config::inst()->get(__CLASS__, 'member_mapper');
 		if(!isset($mapper[$this->Provider])) {
 			return array();
+		}
+		return $mapper[$this->Provider];
+	}
+
+	/**
+	 * @return arrau The variable(s) on the Member object that is used to link Identities to Members
+	 */
+	public function getMemberLookupVars() {
+		$mapper = Config::inst()->get(__CLASS__, 'member_lookup_var');
+		if(empty($mapper) || !isset($mapper[$this->Provider])) {
+			return array("Email"=>"Email");
 		}
 		return $mapper[$this->Provider];
 	}

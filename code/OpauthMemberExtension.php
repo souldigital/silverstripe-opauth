@@ -9,4 +9,12 @@ class OpauthMemberExtension extends DataExtension {
 		$this->owner->OpauthIdentities()->removeAll();
 	}
 
+	/**
+	 * @return bool|OpauthIdentity
+	 */
+	public function getOpauthIdentityByName($provider_name){
+		if(!$this->owner->exists()) return false;
+		return $this->owner->OpauthIdentities()->find("Provider",$provider_name);
+	}
+
 }
