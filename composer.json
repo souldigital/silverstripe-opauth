@@ -1,5 +1,5 @@
 {
-	"name": "betterbrief/silverstripe-opauth",
+	"name": "souldigital/opauth",
 	"type": "silverstripe-module",
 	"description": "SilverStripe 3.1 OpAuth module. See: http://opauth.org/",
 	"keywords": ["silverstripe", "social", "opauth", "oauth", "login"],
@@ -15,6 +15,11 @@
 			"name": "Dan Hensby",
 			"homepage": "https://github.com/dhensby",
 			"role": "Code Scrutinizer"
+		},
+		{
+			"name": "Tim Larsen",
+			"homepage": "https://github.com/tim-lar",
+			"role": "Developer"
 		}
 	],
 	"require": {
