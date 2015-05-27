@@ -1,5 +1,5 @@
 {
-	"name": "souldigital/opauth",
+	"name": "betterbrief/silverstripe-opauth",
 	"type": "silverstripe-module",
 	"description": "SilverStripe 3.1 OpAuth module. See: http://opauth.org/",
 	"keywords": ["silverstripe", "social", "opauth", "oauth", "login"],
